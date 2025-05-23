@@ -18,8 +18,8 @@ export const Cell = {
     background: state.isSelected ? "blue" : "lightBlue",
     flexDirection: "column",
     aspectRatio: "1 / 1",
-    minWidth: "100%",
-    minHeight: "100%",
+    width: "10vw",
+    height: "10vw",
     borderRadius: "0.25rem",
     transition: "background 0.2s ease-in-out",
     ":hover": {

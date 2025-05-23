@@ -1,13 +1,6 @@
 "use strict";
-import { Flex, Grid } from "smbls";
-import { Cell } from "./Cell";
-
-export function getGridProps(rows = 8, columns = 16) {
-  return {
-    gridTemplateColumns: `repeat(${columns}, 1fr)`,
-    gridTemplateRows: `repeat(${rows}, 1fr)`,
-  };
-}
+import { Flex } from "smbls";
+import { GridModel } from "./GridModel";
 
 export const GridFooter = {
   extend: Flex,
@@ -16,61 +9,83 @@ export const GridFooter = {
     padding: "Z B",
     align: "center space-between",
     gap: "A",
-    fontFamily: 'DefaultFont',
+    fontFamily: "DefaultFont",
   },
-  text: 'Selection coordinates: {{parent.colNumber}},{{parent.rowNumber}}',
+  text: "Selection coordinates: {{selectedCol}},{{selectedRow}}",
 };
 
 export const GridSelection = {
-  extend: Grid,
   state: {
-    cells: [],
     columns: 16,
     rows: 8,
+    cells: new GridModel(8, 16).get(),
+    selectedCol: 0,
+    selectedRow: 0,
   },
   props: {
-    minWidth: "fit-content",
-    minHeight: "fit-content",
+    minWidth: "100%",
+    minHeight: "100%",
     maxWidth: "100%",
     maxHeight: "100%",
-    background: "white",
     borderRadius: "0.5rem",
     boxShadow: "0 0 0.5rem rgba(0, 0, 0, 0.5)",
     padding: "Z B",
+    style: {
+      display: "grid",
+      gridAutoFlow: "column",
+      gridTemplateColumns: (state) =>
+        `repeat(${state.columns}, minmax(0, 1fr))`,
+      gridTemplateRows: (state) => `repeat(${state.rows}, minmax(0, 1fr))`,
+    },
     gap: "A",
   },
-  Cell
+  Grid: {
+    children: (element, state) => state.cells,
+    childProps: {
+      Cell: {
+        onClick: (event, element, state) => {
+          element.state.update({ isSelected: !state.isSelected });
+          element.parent.state.update({
+            selectedCol: element.state.col,
+            selectedRow: element.state.row,
+          });
+        },
+      },
+    },
+    childrenAs: "state",
+  },
 };
 
 export const GridModal = {
+  tag: "section",
   extends: Flex,
   state: {
-    show: false,
+    open: false,
+    selectedCol: 0,
+    selectedRow: 0,
   },
+  class: "grid-modal",
   props: {
-    display: (element, state) => (state.show ? "flex" : "none"),
-    zIndex: 100,
-    position: "absolute",
-    top: "50%",
-    bottom: "50%",
-    margin: "auto auto",
-    flexDirection: "column",
-    minWidth: "fit-content",
+    style: (state) => ({
+      display: state.open ? "flex" : "none",
+    }),
+    flex: "1",
+    flexDirection: "row",
+    minWidth: "90vw",
     minHeight: "fit-content",
     padding: "Z B",
     align: "center space-between",
     gap: "1rem",
-    background: "white",
     borderRadius: "1rem",
     color: "black",
   },
-  'h6': {
+  h6: {
     text: "Grid Selection",
     props: {
       fontWeight: "bold",
       margin: "1rem 0",
-    }
+    },
   },
   GridSelection,
   GridFooter,
-}
+};

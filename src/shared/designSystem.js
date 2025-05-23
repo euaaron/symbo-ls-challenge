@@ -43,7 +43,7 @@ const THEME = {
       color: "white",
     },
   },
-  GridSelection: {
+  GridModal: {
     "@dark": {
       background: "modalBlack",
     },

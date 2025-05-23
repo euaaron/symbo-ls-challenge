@@ -8,8 +8,11 @@ export const App = {
   props: {
     theme: "document",
     flow: "column",
-    height: "100vh",
     align: "center space-between",
+    style: {
+      width: "100vw",
+      height: "100vh",
+    },
   },
 
   Header: {},
